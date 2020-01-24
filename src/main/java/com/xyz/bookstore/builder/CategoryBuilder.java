@@ -11,13 +11,11 @@ public class CategoryBuilder
 
     private final CategoryService categoryService;
 
-
     @Autowired
     public CategoryBuilder(CategoryService categoryService)
     {
         this.categoryService = categoryService;
     }
-
 
     public Category fromName(String categoryName)
     {

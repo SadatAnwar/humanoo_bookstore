@@ -1,15 +1,15 @@
-set schema bookstore;
-
-INSERT INTO categories (id, name)
-VALUES (1, 'Children'),
-       (2, 'Fiction'),
-       (3, 'Self Help');
+INSERT INTO bookstore.categories (name)
+VALUES ('Children'),
+       ('Fiction'),
+       ('Self Help');
 
 
-INSERT INTO books (id, isbn, name, author_name)
-VALUES (1, 'ISBN-121231231231', 'Harry Potter book 1', 'J.K. Rowling');
+INSERT INTO bookstore.books (isbn, name, author_name)
+VALUES ('ISBN-121231231231', 'Harry Potter book 1', 'J.K. Rowling');
 
-INSERT INTO book_categories(book_id, category_id)
-VALUES (1, 1),
-       (1, 2);
-
+INSERT INTO bookstore.book_categories(book_id, category_id)
+select b.id, c.id
+from bookstore.books b
+         cross join bookstore.categories c
+where b.name = 'Harry Potter book 1'
+  and (c.name = 'Children' OR c.name = 'Fiction');

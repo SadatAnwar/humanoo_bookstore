@@ -10,7 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "categories", catalog = "bookstore")
+@Table(name = "categories", schema = "bookstore")
 public class Category
 {
     @Id
@@ -25,15 +25,7 @@ public class Category
 
     protected Category()
     {
-
     }
-
-
-    public Long getId()
-    {
-        return id;
-    }
-
 
     public String getName()
     {

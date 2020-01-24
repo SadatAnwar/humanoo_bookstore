@@ -18,13 +18,11 @@ public class BookService
 
     private final BooksRepository booksRepository;
 
-
     @Autowired
     public BookService(BooksRepository booksRepository)
     {
         this.booksRepository = booksRepository;
     }
-
 
     public List<Book> getAllBooks()
     {
@@ -33,12 +31,10 @@ public class BookService
         return books;
     }
 
-
     public Book findBookById(Long id)
     {
         return booksRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
     }
-
 
     @Transactional
     public Book addNewBook(Book book)

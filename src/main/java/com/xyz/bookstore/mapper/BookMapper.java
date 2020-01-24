@@ -15,13 +15,11 @@ public class BookMapper
 {
     private final CategoryBuilder categoryBuilder;
 
-
     @Autowired
     public BookMapper(CategoryBuilder categoryBuilder)
     {
         this.categoryBuilder = categoryBuilder;
     }
-
 
     public List<BookDto> toDto(List<Book> books)
     {
@@ -29,7 +27,6 @@ public class BookMapper
             .map(this::toDto)
             .collect(Collectors.toList());
     }
-
 
     public BookDto toDto(Book book)
     {
@@ -45,7 +42,6 @@ public class BookMapper
 
         return dto;
     }
-
 
     public Book toEntity(BookDto bookDto)
     {
