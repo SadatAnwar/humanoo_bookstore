@@ -1,9 +1,11 @@
 package com.xyz.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xyz.bookstore.controller.config.PostgresTestContainer;
 import com.xyz.bookstore.dto.BookDto;
 import java.util.Arrays;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -26,23 +28,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BooksControllerTest
-{
+public class BooksControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @ClassRule
+    public static PostgresTestContainer postgresTestContainer = PostgresTestContainer.getInstance();
+
     @Before
-    public void setup()
-    {
+    public void setup() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void test_GET_books_should_return_all_books() throws Exception
-    {
+    public void test_GET_books_should_return_all_books() throws Exception {
         this.mockMvc
             .perform(get("/api/books")
                 .accept(MediaType.APPLICATION_JSON)
@@ -53,8 +55,7 @@ public class BooksControllerTest
 
     @Test
     @WithMockUser(roles = {"ADMIN"})
-    public void test_POST_book_will_insert_new_book_if_user_has_admin_role() throws Exception
-    {
+    public void test_POST_book_will_insert_new_book_if_user_has_admin_role() throws Exception {
         BookDto mockBookDto = createMockBookDto();
         this.mockMvc
             .perform(
@@ -68,8 +69,7 @@ public class BooksControllerTest
     }
 
     @Test
-    public void test_POST_without_proper_role_will_return_UNAUTHORISED() throws Exception
-    {
+    public void test_POST_without_proper_role_will_return_UNAUTHORISED() throws Exception {
         BookDto mockBookDto = createMockBookDto();
         this.mockMvc
             .perform(
@@ -80,8 +80,7 @@ public class BooksControllerTest
             .andExpect(status().isUnauthorized());
     }
 
-    private BookDto createMockBookDto()
-    {
+    private BookDto createMockBookDto() {
         BookDto dto = new BookDto();
         dto.name = "Hello World";
         dto.authorName = "Casper the friendly ghost";
