@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class BooksController {
 
     @GetMapping(path = "/{id}")
     public BookDto getBook(@PathVariable Long id) {
-        Book book = bookService.findBookById(id);
+        Book book = bookService.loadBookById(id);
 
         return bookMapper.toDto(book);
     }
@@ -48,5 +49,12 @@ public class BooksController {
         Book book = bookMapper.toEntity(bookDto);
 
         return bookMapper.toDto(bookService.addNewBook(book));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("ROLE_ADMIN")
+    public void deleteBook(@PathVariable Long id) {
+        bookService.deleteBookById(id);
     }
 }

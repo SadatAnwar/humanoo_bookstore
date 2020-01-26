@@ -1,7 +1,7 @@
 package com.xyz.bookstore.controller;
 
 import com.xyz.bookstore.dto.ErrorDto;
-import javax.persistence.EntityNotFoundException;
+import com.xyz.bookstore.exception.BookStoreBaseException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(BookStoreBaseException.class)
+    public ResponseEntity<Object> handleEntityNotFound(BookStoreBaseException e, HttpServletRequest request) {
 
         ErrorDto dto = new ErrorDto();
-        dto.code = "ENTITY_NOT_FOUND";
-        dto.httpStatus = HttpStatus.NOT_FOUND;
+        dto.code = e.getCode();
+        dto.httpStatus = e.getHttpStatus();
         dto.message = e.getMessage();
         dto.path = request.getServletPath();
         dto.httpMethod = request.getMethod();

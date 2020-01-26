@@ -6,19 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryBuilder
-{
+public class CategoryBuilder {
 
     private final CategoryService categoryService;
 
     @Autowired
-    public CategoryBuilder(CategoryService categoryService)
-    {
+    public CategoryBuilder(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-    public Category fromName(String categoryName)
-    {
-        return categoryService.findByName(categoryName);
+    public Category loadCategoryByName(String categoryName) {
+        return categoryService.loadByName(categoryName);
+    }
+
+    public Category buildNewCategoryByName(String categoryName) {
+        return new Category(categoryName);
     }
 }

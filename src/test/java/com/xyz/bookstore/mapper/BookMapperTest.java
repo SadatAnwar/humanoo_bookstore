@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -71,8 +70,8 @@ public class BookMapperTest {
 
         subject.toEntity(dto);
 
-        verify(categoryBuilder).fromName("category1");
-        verify(categoryBuilder).fromName("category2");
+        verify(categoryBuilder).loadCategoryByName("category1");
+        verify(categoryBuilder).loadCategoryByName("category2");
     }
 
     @Test
@@ -85,7 +84,7 @@ public class BookMapperTest {
 
         Category mockCategory = mock(Category.class);
 
-        when(categoryBuilder.fromName("category1")).thenReturn(mockCategory);
+        when(categoryBuilder.loadCategoryByName("category1")).thenReturn(mockCategory);
 
         Book result = subject.toEntity(dto);
 

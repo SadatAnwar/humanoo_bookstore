@@ -46,7 +46,7 @@ public class BookMapper
     public Book toEntity(BookDto bookDto)
     {
         List<Category> categories = bookDto.categories.stream()
-            .map(categoryBuilder::fromName)
+            .map(categoryBuilder::loadCategoryByName)
             .collect(Collectors.toList());
 
         return new Book(bookDto.isbn, bookDto.name, bookDto.authorName, categories);

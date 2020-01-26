@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class Category
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -27,8 +27,20 @@ public class Category
     {
     }
 
+    public Category(String name) {
+        this.name = name;
+    }
+
     public String getName()
     {
         return name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Book> getBooks() {
+        return books;
     }
 }

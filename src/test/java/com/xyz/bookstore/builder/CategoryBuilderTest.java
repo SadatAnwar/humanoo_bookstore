@@ -29,20 +29,20 @@ public class CategoryBuilderTest {
     }
 
     @Test
-    public void test_fromName_should_call_category_service_and_fetch_category_by_name() {
+    public void test_loadCategoryByName_should_call_category_service_and_fetch_category_by_name() {
         String categoryName = "category1";
-        subject.fromName(categoryName);
+        subject.loadCategoryByName(categoryName);
 
-        verify(categoryService).findByName(eq(categoryName));
+        verify(categoryService).loadByName(eq(categoryName));
     }
 
     @Test
-    public void test_fromName_should_return_category_returned_from_service() {
+    public void test_loadCategoryByName_should_return_category_returned_from_service() {
         String categoryName = "category1";
 
         Category mockCategory = mock(Category.class);
-        when(categoryService.findByName(categoryName)).thenReturn(mockCategory);
-        Category result = subject.fromName(categoryName);
+        when(categoryService.loadByName(categoryName)).thenReturn(mockCategory);
+        Category result = subject.loadCategoryByName(categoryName);
 
         assertThat(result, equalTo(mockCategory));
 
