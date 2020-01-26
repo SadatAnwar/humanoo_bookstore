@@ -4,13 +4,15 @@ import com.xyz.bookstore.domain.Book;
 import com.xyz.bookstore.exception.BookNotFoundException;
 import com.xyz.bookstore.repository.BooksRepository;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,16 +37,17 @@ public class BookServiceTest {
 
     @Test
     public void test_getAllBooks_should_call_find_all_in_repo() {
-
         Book mockBook = mock(Book.class);
-        when(booksRepository.findAll()).thenReturn(Arrays.asList(mockBook));
 
-        List<Book> result = subject.getAllBooks();
+        Pageable mockPageable = mock(Pageable.class);
+        when(booksRepository.findAll(mockPageable)).thenReturn(new PageImpl<>(Arrays.asList(mockBook)));
 
-        verify(booksRepository).findAll();
+        Page<Book> result = subject.getAllBooks(mockPageable);
 
-        assertThat(result, hasSize(1));
-        assertThat(result.get(0), equalTo(mockBook));
+        verify(booksRepository).findAll(mockPageable);
+
+        assertThat(result.getContent(), hasSize(1));
+        assertThat(result.getContent().get(0), equalTo(mockBook));
 
     }
 

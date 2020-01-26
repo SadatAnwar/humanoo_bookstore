@@ -8,28 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookMapper
-{
+public class BookMapper {
     private final CategoryBuilder categoryBuilder;
 
     @Autowired
-    public BookMapper(CategoryBuilder categoryBuilder)
-    {
+    public BookMapper(CategoryBuilder categoryBuilder) {
         this.categoryBuilder = categoryBuilder;
     }
 
-    public List<BookDto> toDto(List<Book> books)
-    {
+    public Page<BookDto> toDto(Page<Book> books) {
+        return books.map(this::toDto);
+    }
+
+    public List<BookDto> toDto(List<Book> books) {
         return books.stream()
             .map(this::toDto)
             .collect(Collectors.toList());
     }
 
-    public BookDto toDto(Book book)
-    {
+    public BookDto toDto(Book book) {
         BookDto dto = new BookDto();
         dto.id = book.getId();
         dto.isbn = book.getIsbn();
@@ -43,8 +44,7 @@ public class BookMapper
         return dto;
     }
 
-    public Book toEntity(BookDto bookDto)
-    {
+    public Book toEntity(BookDto bookDto) {
         List<Category> categories = bookDto.categories.stream()
             .map(categoryBuilder::loadCategoryByName)
             .collect(Collectors.toList());

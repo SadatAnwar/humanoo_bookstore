@@ -62,7 +62,6 @@ public class CategoryServiceTest {
     public void test_safeDeleteCategory_should_throw_exception_if_books_are_attached_to_category() {
         Book mockBook = mock(Book.class);
         Category mockCategory = mock(Category.class);
-        when(mockCategory.getId()).thenReturn(1L);
 
         when(mockCategory.getBooks()).thenReturn(Arrays.asList(mockBook));
 

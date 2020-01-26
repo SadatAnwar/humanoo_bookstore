@@ -4,8 +4,10 @@ import com.xyz.bookstore.domain.Book;
 import com.xyz.bookstore.dto.BookDto;
 import com.xyz.bookstore.mapper.BookMapper;
 import com.xyz.bookstore.service.BookService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +33,8 @@ public class BooksController {
     }
 
     @GetMapping
-    public List<BookDto> getAllBooks() {
-        return bookMapper.toDto(bookService.getAllBooks());
+    public Page<BookDto> getAllBooks(@PageableDefault Pageable pageable) {
+        return bookMapper.toDto(bookService.getAllBooks(pageable));
     }
 
     @GetMapping(path = "/{id}")

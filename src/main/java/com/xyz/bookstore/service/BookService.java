@@ -3,10 +3,11 @@ package com.xyz.bookstore.service;
 import com.xyz.bookstore.domain.Book;
 import com.xyz.bookstore.exception.BookNotFoundException;
 import com.xyz.bookstore.repository.BooksRepository;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +24,10 @@ public class BookService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> getAllBooks() {
-        List<Book> books = booksRepository.findAll();
-        LOGGER.debug("Found {} books", books.size());
+    public Page<Book> getAllBooks(Pageable pageable) {
+        Page<Book> books = booksRepository.findAll(pageable);
+        LOGGER.debug("Found {} books", books.getTotalElements());
+
         return books;
     }
 
