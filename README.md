@@ -47,26 +47,160 @@ Using OpenId Connect 1.0 is an industry standart, it also works very well with O
 
 ### Requirements:
 
-The solution uses `docker-compose` to simplify the deployment process. You will therefore need to have docker installed on the test machine. This also simplifies all other requirements, in that you only need docker, the rest is automatically pulled based on requirements.
+The solution uses `docker-compose` to simplify the deployment process. You will therefore need to have `docker` and `docker-compose` installed on the test machine. This also simplifies all other requirements, in that you only need docker, the rest is automatically pulled based on requirements.
+
+To install `docker`  and `docker-compose` follow the steps for the required OS on the [official page](https://docs.docker.com/compose/install/)
 
 
 
+### Notes about the solution
 
+1. The solution is build using Spring Boot V 2.2.2.RELEASE
+2. It has dependencies on Spring Jpa for database access
+3. Depends on Spring security for securing the `POST`  `/api/books` endpoint to ensure authorised users can add books
+4. Uses Spring actuator to enable actuator endpoints like `/actuator/health` which would be nice to have in a destributed setup
+5. Uses [Flyway](https://flywaydb.org/) for databse migration
+6. Connectes to a postgres db (that is started up by docker and is also configured in the docker-compose.yaml)
+7. Uses [Testcontainers](https://www.testcontainers.org/) to spawn a Postgres db during integration tests. This approach means the integration tests are a bit slower than would be if H2 were used, but ensures that the integration test uses the same db used in production. Has numerous benefits. 
+8. Uses Junit4 and Mockito for testing and mocking during tests.
+
+
+
+#### Starting the solution
+
+Once you have `docker` and `docker-compose` installed all you need to do is 
+
+```bash
+$ docker-compose build
+...
+
+$ docker-compose up
+```
+
+
+
+This should start both the Postgres container and the bookstore api container. The compose.yaml also ensures the bookstore-api container can connect to the postgres container. The first time you run it, it might take a few minutes to download all dependencies and build the containers, but subsequent builds should be significantly faster as most of the reuseable data is going to be cached. 
+
+It is possible to run the solution without docker, but this will need a little more configuration. 
+
+1. Since the solution relies on postgres, you will need to ensure there is a postgres db accessible. 
+
+2. To allow the solution to connect to this PSql db, some ENV variables will need to be set
+
+   1. `export DB_URL=jdbc:postgresql://localhost:5432/postgres`
+   2. `export DB_USERNAME=postgres`
+   3. `export DB_PASSWORD=xxxxxxx`
+
+   NOTE: The user should have access to create schema, and tables. (The application will create 2 schemas. One for the application itself called `bookstore` and another for flyway called `flywaymigration`)
+
+3. Once you have those env variables setup, you can run
+
+   ```bash
+   $ mvn spring-boot:run
+   ```
+
+   This should start the application and connect to the postgres instance defined by the env variables 
+
+### Using the application
+
+Once the application is up and running, it will be accessible via `localhost:8080`. An easy way to check if its running is to try `GET` `localhost:8080/actuator/health`
+
+You can use [Postman](https://www.getpostman.com/) to test the API
+
+this should return a json result 
+
+```json
+{
+  "status": "UP"
+}
+```
+
+```bash
+curl --request GET \
+  --url http://localhost:8080/actuator/health \
+  --header 'content-type: application/json'
+```
+
+
+
+### List all books in the store
+
+​	To get a list of all the books in the store
+
+`GET` `/api/books`
+
+```bash
+	curl --request GET \
+  --url http://localhost:8080/api/books \
+  --header 'content-type: application/json'
+```
+
+
+
+result will look like 
+
+```json
+[
+  {
+    "id": 1,
+    "isbn": "ISBN-121231231231",
+    "name": "Harry Potter book 1",
+    "authorName": "J.K. Rowling",
+    "categories": [
+      "Children",
+      "Fiction"
+    ],
+    "createdAt": "2020-01-25T22:07:32.248028",
+    "updatedAt": "2020-01-25T22:07:32.248028"
+  },
+  {
+    "id": 2,
+    "isbn": "ISBN-121231231231",
+    "name": "Harry Potter book 3",
+    "authorName": "J.K. Rowling",
+    "categories": [
+      "Children"
+    ],
+    "createdAt": "2020-01-25T22:09:21.999",
+    "updatedAt": "2020-01-25T22:09:22.047"
+  }
+]
+```
 
 ###  Add a book to the store
 
 The following `cURL` command will add a new book to the bookstore. 
 
+In order to add a book to the store, the request will need httpBasic authentication, with username=admin and password=admin. (Naturally this is not very secure but is used here just as a example.) 
+
 ```shell
-curl --request GET \
-  --url http://localhost:8080/books \
+curl --request POST \
+  --url http://localhost:8080/api/books \
+  --header 'authorization: Basic YWRtaW46YWRtaW4=' \
   --header 'content-type: application/json' \
   --data '{
     "isbn": "ISBN-121231231231",
-    "name": "Harry Potter book 3",
+    "name": "Harry Potter book 4",
     "authorName": "J.K. Rowling",
     "categories": [
       "Children"
     ]
   }'
 ```
+
+The result will contain the newly created book with its Id populated from the db
+
+```json
+{
+  "id": 40,
+  "isbn": "ISBN-121231231231",
+  "name": "Harry Potter book 4",
+  "authorName": "J.K. Rowling",
+  "categories": [
+    "Children"
+  ],
+  "createdAt": "2020-01-26T00:43:20.581",
+  "updatedAt": "2020-01-26T00:43:20.642"
+}
+```
+

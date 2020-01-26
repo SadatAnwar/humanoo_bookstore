@@ -1,4 +1,4 @@
-package com.xyz.bookstore.controller.config;
+package com.xyz.bookstore.config;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

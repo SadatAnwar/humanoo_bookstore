@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,30 +18,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/books")
-public class BooksController
-{
+public class BooksController {
     private final BookService bookService;
 
     private final BookMapper bookMapper;
 
     @Autowired
-    public BooksController(BookService bookService, BookMapper bookMapper)
-    {
+    public BooksController(BookService bookService, BookMapper bookMapper) {
         this.bookService = bookService;
         this.bookMapper = bookMapper;
     }
 
     @GetMapping
-    public List<BookDto> getAllBooks()
-    {
+    public List<BookDto> getAllBooks() {
         return bookMapper.toDto(bookService.getAllBooks());
+    }
+
+    @GetMapping(path = "/{id}")
+    public BookDto getBook(@PathVariable Long id) {
+        Book book = bookService.findBookById(id);
+
+        return bookMapper.toDto(book);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("ROLE_ADMIN")
-    public BookDto addBook(@RequestBody BookDto bookDto)
-    {
+    public BookDto addBook(@RequestBody BookDto bookDto) {
         Book book = bookMapper.toEntity(bookDto);
 
         return bookMapper.toDto(bookService.addNewBook(book));

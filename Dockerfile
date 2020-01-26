@@ -27,4 +27,4 @@ WORKDIR /usr/app
 COPY --from=build /usr/bookstore/target/bookstore-*.jar ./
 COPY --from=build /usr/bookstore/wait-for-it.sh ./wait-for-it.sh
 
-ENTRYPOINT ./wait-for-it.sh ${DB_HOST}:${DB_PORT} -- java -jar bookstore-1.0-SNAPSHOT.jar
+ENTRYPOINT ./wait-for-it.sh ${DB_HOST}:${DB_PORT} --timeput=30 -- java -jar bookstore-1.0-SNAPSHOT.jar

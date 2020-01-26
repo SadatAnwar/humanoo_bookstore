@@ -1,7 +1,7 @@
 package com.xyz.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xyz.bookstore.controller.config.PostgresTestContainer;
+import com.xyz.bookstore.config.PostgresTestContainer;
 import com.xyz.bookstore.dto.BookDto;
 import java.util.Arrays;
 import org.junit.Before;
@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,6 +52,25 @@ public class BooksControllerTest {
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    public void test_GET_book_by_id_should_return_book() throws Exception {
+        this.mockMvc
+            .perform(get("/api/books/1")
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", equalTo(1)));
+    }
+
+    @Test
+    public void test_GET_book_by_id_respond_404_when_not_found() throws Exception {
+        this.mockMvc
+            .perform(get("/api/books/99")
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound());
     }
 
     @Test
